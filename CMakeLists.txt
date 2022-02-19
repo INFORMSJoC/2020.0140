@@ -1,14 +1,14 @@
 # CHECK CMAKE VERSION
 cmake_minimum_required(VERSION 3.3)
-set(CMAKE_C_COMPILER clang)
-set(CMAKE_CXX_COMPILER clang++)
+# set(CMAKE_C_COMPILER clang)
+# set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_CXX_STANDARD 11)
 
 # CHOOSE TO BUILD PYTHON PROJECT
 option(BUILD_PYTHON "Build the package for python" OFF)
 
 if(BUILD_PYTHON)
-    project(ROPY)
+    project(ROPy)
 else()
     project(ROCPP)
 endif() 

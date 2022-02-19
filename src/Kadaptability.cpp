@@ -1,5 +1,5 @@
 //
-//  KADecisionRule.cpp
+//  Kadaptability.cpp
 //  RobustOptimizationPlatform
 //
 // This software is Copyright © 2020 The University of Southern California. All Rights Reserved.
@@ -21,7 +21,7 @@
 #include "FileRelations.hpp"
 #include "IndexSetCreator.hpp"
 #include "DecisionRule.hpp"
-#include "KADecisionRule.hpp"
+#include "Kadaptability.hpp"
 #include "UncertaintyConverter.hpp"
 #include <iomanip>
 #include <chrono>
@@ -230,12 +230,12 @@ string KadaptabilityPartitionEncoderMS::getPartitionSubset(const map<uint,uint> 
 //%%%%%%%%%%%%%%%%% Constructors & Destructors %%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-KadaptabilityDecisionRule::KadaptabilityDecisionRule(const map<uint, uint> &numPartitionMap, double bigM, double epsilon, string folder) : m_folder(folder), m_epsilon(epsilon), m_numPartitionsMap(numPartitionMap)
+Kadaptability::Kadaptability(const map<uint, uint> &numPartitionMap, double bigM, double epsilon, string folder) : m_folder(folder), m_epsilon(epsilon), m_numPartitionsMap(numPartitionMap)
 {
     m_pBTR = ROCPPBilinearReform_Ptr(new BTR_bigM("bl", "", 0, bigM));
 }
 
-//KadaptabilityDecisionRule::KadaptabilityDecisionRule(ROCPPKadaptEncoder_Ptr pPartitionEncoder, double bigM, double epsilon, string folder) : m_pPartitionEncoder(pPartitionEncoder), m_folder(folder), m_epsilon(epsilon)
+//Kadaptability::Kadaptability(ROCPPKadaptEncoder_Ptr pPartitionEncoder, double bigM, double epsilon, string folder) : m_pPartitionEncoder(pPartitionEncoder), m_folder(folder), m_epsilon(epsilon)
 //{
 //    m_pBTR = ROCPPBilinearReform_Ptr(new BTR_bigM("bl", "", 0, bigM));
 //}
@@ -244,7 +244,7 @@ KadaptabilityDecisionRule::KadaptabilityDecisionRule(const map<uint, uint> &numP
 //%%%%%%%%%%%%%%%%%%% Compatibility Functions %%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-bool KadaptabilityDecisionRule::isApplicable(ROCPPOptModelIF_Ptr pIn) const
+bool Kadaptability::isApplicable(ROCPPOptModelIF_Ptr pIn) const
 {
     
     OptimizationModelIF::varsIterator pVar = pIn->varsBegin();
@@ -276,7 +276,7 @@ bool KadaptabilityDecisionRule::isApplicable(ROCPPOptModelIF_Ptr pIn) const
     return true;
 }
 
-void KadaptabilityDecisionRule::checkWsCompatability(const map<uint,uint> &wsMap)
+void Kadaptability::checkWsCompatability(const map<uint,uint> &wsMap)
 {
     if(wsMap.size() != m_pPartitionEncoder->getT())
         throw MyException("The time span of k must equal to the time stage of the model");
@@ -298,7 +298,7 @@ void KadaptabilityDecisionRule::checkWsCompatability(const map<uint,uint> &wsMap
 //%%%%%%%%%%%%%%%%%%%%%%%%% Doer Functions %%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void KadaptabilityDecisionRule::initialize(ROCPPOptModelIF_Ptr pIn)
+void Kadaptability::initialize(ROCPPOptModelIF_Ptr pIn)
 {
     map<uint, uint> newPartitionMap;
     
@@ -315,7 +315,7 @@ void KadaptabilityDecisionRule::initialize(ROCPPOptModelIF_Ptr pIn)
     m_pPartitionEncoder=pPartitionEncoder;
 }
 
-void KadaptabilityDecisionRule::createVariableAndUncMap(dvContainer::const_iterator varsBegin, dvContainer::const_iterator varsEnd, uncContainer::const_iterator uncBegin, uncContainer::const_iterator uncEnd)
+void Kadaptability::createVariableAndUncMap(dvContainer::const_iterator varsBegin, dvContainer::const_iterator varsEnd, uncContainer::const_iterator uncBegin, uncContainer::const_iterator uncEnd)
 {
     
     uint numPart(1);
@@ -418,7 +418,7 @@ void KadaptabilityDecisionRule::createVariableAndUncMap(dvContainer::const_itera
     }
 }
 
-ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approximate(ROCPPOptModelIF_Ptr pIn)
+ROCPPOptModelIF_Ptr Kadaptability::approximate(ROCPPOptModelIF_Ptr pIn)
 {
     cout << endl;
     cout << "=========================================================================== " << endl;
@@ -466,7 +466,7 @@ ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approximate(ROCPPOptModelIF_Ptr p
     return pOut;
 }
 
-ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approxObjUnc(ROCPPOptModelIF_Ptr pIn)
+ROCPPOptModelIF_Ptr Kadaptability::approxObjUnc(ROCPPOptModelIF_Ptr pIn)
 {
 
     createVariableAndUncMap(pIn->varsBegin(), pIn->varsEnd(), pIn->uncertaintiesBegin(), pIn->uncertaintiesEnd());
@@ -562,7 +562,7 @@ ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approxObjUnc(ROCPPOptModelIF_Ptr 
         // add to the robust problem the only uncertain constraint (for this choice of element i)
 
         // add one epigraph constraint to the problem
-        ROCPPConstraintIF_Ptr pcstr_epi( new IneqConstraint() );
+        ROCPPClassicConstraint_Ptr pcstr_epi( new IneqConstraint() );
         pcstr_epi->add_lhs(1., pEpigraphUnc);
         pcstr_epi->add_lhs(-1., pEpi);
         pcstr_epi->set_rhs(make_pair(0.,true));
@@ -591,7 +591,7 @@ ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approxObjUnc(ROCPPOptModelIF_Ptr 
                 throw MyException("k value not found in unc map");
             
             
-            ROCPPConstraintIF_Ptr pcstr ( new IneqConstraint(true,false) );
+            ROCPPClassicConstraint_Ptr pcstr ( new IneqConstraint(true,false) );
             
             ROCPPExpr_Ptr tmp ( pIn->getObj()->getObj((*vit)[kcount-1]) );
             
@@ -688,7 +688,7 @@ ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approxObjUnc(ROCPPOptModelIF_Ptr 
                             
                             // create the NACs
 
-                            ROCPPConstraintIF_Ptr nac (  new EqConstraint(true,false) );
+                            ROCPPClassicConstraint_Ptr nac (  new EqConstraint(true,false) );
                             nac->add_lhs(1., u_current ,mvp );
                             nac->add_lhs(-1., u_prev ,mvp );
                             nac->set_rhs(make_pair(0.,true));
@@ -700,7 +700,7 @@ ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approxObjUnc(ROCPPOptModelIF_Ptr 
                             if (t > pIn->getFirstStageObservable( u_it->second->getName() ))
                             {
                                 
-                                ROCPPConstraintIF_Ptr nac (  new EqConstraint(true,false) );
+                                ROCPPClassicConstraint_Ptr nac (  new EqConstraint(true,false) );
                                 nac->add_lhs(1., u_current );
                                 nac->add_lhs(-1., u_prev );
                                 nac->set_rhs(make_pair(0.,true));
@@ -728,7 +728,7 @@ ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approxObjUnc(ROCPPOptModelIF_Ptr 
     return pOut;
 }
 
-ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approxCstrUnc(ROCPPOptModelIF_Ptr pIn)
+ROCPPOptModelIF_Ptr Kadaptability::approxCstrUnc(ROCPPOptModelIF_Ptr pIn)
 {
     
     // **** initialize the problem ****
@@ -922,7 +922,7 @@ ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approxCstrUnc(ROCPPOptModelIF_Ptr
                     
                     ROCPPClassicConstraint_Ptr Cstr = dynamic_pointer_cast<ClassicConstraintIF>(uncCstr[l_k-1]);
 
-                    ROCPPConstraintIF_Ptr oldCstr(new IneqConstraint(true));
+                    ROCPPClassicConstraint_Ptr oldCstr(new IneqConstraint(true));
                     oldCstr->add_lhs(-1.0, Cstr->getLHS());
                     oldCstr->add_lhs(Cstr->get_rhs().first);
                     oldCstr->set_rhs(make_pair(-1*m_epsilon, false));
@@ -947,7 +947,7 @@ ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approxCstrUnc(ROCPPOptModelIF_Ptr
                         if (u_it_statl==uncStatMapInl.end())
                             throw MyException("Uncertain parameter not found");
                         
-                        ROCPPConstraintIF_Ptr nacl ( new EqConstraint(true,false) );
+                        ROCPPClassicConstraint_Ptr nacl ( new EqConstraint(true,false) );
                         nacl->add_lhs(1., u_it_statl->second ,mv );
                         nacl->add_lhs(-1., u_it_kl->second ,mv );
                         nacl->set_rhs(make_pair(0.,true));
@@ -964,7 +964,7 @@ ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approxCstrUnc(ROCPPOptModelIF_Ptr
                             if (u_it_statl==uncStatMapInl.end())
                                 throw MyException("Uncertain parameter not found");
                             
-                            ROCPPConstraintIF_Ptr nacl (  new EqConstraint(true,false) );
+                            ROCPPClassicConstraint_Ptr nacl (  new EqConstraint(true,false) );
                             nacl->add_lhs(1., u_it_statl->second );
                             nacl->add_lhs(-1., u_it_kl->second );
                             nacl->set_rhs(make_pair(0.,true));
@@ -975,7 +975,7 @@ ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approxCstrUnc(ROCPPOptModelIF_Ptr
             }
             
             // eipigrah for the objective function for each l
-            ROCPPConstraintIF_Ptr pcstrl ( new IneqConstraint() );
+            ROCPPClassicConstraint_Ptr pcstrl ( new IneqConstraint() );
             pcstrl->add_lhs(obj_lnew);
             pcstrl->add_lhs(-1.0, pEpi);
             pcstrl->set_rhs(make_pair(0.,true));
@@ -983,7 +983,7 @@ ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approxCstrUnc(ROCPPOptModelIF_Ptr
             pOut->add_constraint(pcstrl, elstring);
             
             //constraint for lambda for each l
-            ROCPPConstraintIF_Ptr lcstrl ( new EqConstraint(false, false) );
+            ROCPPClassicConstraint_Ptr lcstrl ( new EqConstraint(false, false) );
             lcstrl->add_lhs(lambda_l);
             lcstrl->set_rhs(make_pair(1.,false));
             
@@ -999,7 +999,7 @@ ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approxCstrUnc(ROCPPOptModelIF_Ptr
             string elstring(to_string(elcnt));
             
             // add infeasible constraint to the problem
-            ROCPPConstraintIF_Ptr pcstr_inf( new IneqConstraint() );
+            ROCPPClassicConstraint_Ptr pcstr_inf( new IneqConstraint() );
             pcstr_inf->add_lhs(1.);
             pcstr_inf->set_rhs(make_pair(0.,true));
             pRobust->add_constraint(pcstr_inf);
@@ -1048,14 +1048,15 @@ ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approxCstrUnc(ROCPPOptModelIF_Ptr
                 
                 ROCPPClassicConstraint_Ptr Cstr = dynamic_pointer_cast<ClassicConstraintIF>(oldCstr);
                 
-                ROCPPConstraintIF_Ptr newCstr(new IneqConstraint(true) );
+                ROCPPClassicConstraint_Ptr newCstr(new IneqConstraint(true) );
                 
                 newCstr->add_lhs(-1.0, Cstr->getLHS() );
                 newCstr->add_lhs(Cstr->get_rhs().first);
                 newCstr->set_rhs(make_pair(-1*m_epsilon, false) );
-                newCstr = newCstr->mapVars(dvMapit->second);
-                newCstr = newCstr->mapUnc(uncMapit->second);
-                pRobust->add_constraint(newCstr);
+                
+                ROCPPConstraintIF_Ptr newCstr2 = newCstr->mapVars(dvMapit->second);
+                newCstr2 = newCstr2->mapUnc(uncMapit->second);
+                pRobust->add_constraint(newCstr2);
                 
                 for (OptimizationModelIF::uncertaintiesIterator u_it = pIn->uncertaintiesBegin(); u_it != pIn->uncertaintiesEnd(); u_it++)
                 {
@@ -1068,7 +1069,7 @@ ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approxCstrUnc(ROCPPOptModelIF_Ptr
                         if (u_it_k==uncMapit->second.end())
                             throw MyException("Uncertain parameter not found");
                         
-                        ROCPPConstraintIF_Ptr nac (  new EqConstraint(true,false) );
+                        ROCPPClassicConstraint_Ptr nac (  new EqConstraint(true,false) );
                         nac->add_lhs(1., u_it->second ,mv );
                         nac->add_lhs(-1., u_it_k->second ,mv );
                         nac->set_rhs(make_pair(0.,true));
@@ -1083,7 +1084,7 @@ ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approxCstrUnc(ROCPPOptModelIF_Ptr
                             if (u_it_k==uncMapit->second.end())
                                 throw MyException("Uncertain parameter not found");
                             
-                            ROCPPConstraintIF_Ptr nac (  new EqConstraint(true,false) );
+                            ROCPPClassicConstraint_Ptr nac (  new EqConstraint(true,false) );
                             nac->add_lhs(1., u_it->second );
                             nac->add_lhs(-1., u_it_k->second );
                             nac->set_rhs(make_pair(0.,true));
@@ -1120,7 +1121,7 @@ ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::approxCstrUnc(ROCPPOptModelIF_Ptr
     return pOut;
 }
 
-ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::fixSecondStageVariablesToWarmStart(ROCPPOptModelIF_Ptr pIn, ROCPPOptModelIF_Ptr pKadaptModel, const map<string,double> &warmStartResults, const map<uint,uint> &wsMap)
+ROCPPOptModelIF_Ptr Kadaptability::fixSecondStageVariablesToWarmStart(ROCPPOptModelIF_Ptr pIn, ROCPPOptModelIF_Ptr pKadaptModel, const map<string,double> &warmStartResults, const map<uint,uint> &wsMap)
 {
     checkWsCompatability(wsMap);
 
@@ -1173,7 +1174,7 @@ ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::fixSecondStageVariablesToWarmStar
     return pOut;
 }
 
-ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::fixBinaryVariableValues(ROCPPOptModelIF_Ptr pKadaptModel, const map<string,bool> &varValues) const
+ROCPPOptModelIF_Ptr Kadaptability::fixBinaryVariableValues(ROCPPOptModelIF_Ptr pKadaptModel, const map<string,bool> &varValues) const
 {
     // we will not add a constraint, instead we completely get rid of the variable using PredefO2EVariableConverter
 
@@ -1218,7 +1219,7 @@ ROCPPOptModelIF_Ptr KadaptabilityDecisionRule::fixBinaryVariableValues(ROCPPOptM
 //%%%%%%%%%%%%%%%%%%%%%%% Getter Functions %%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-string KadaptabilityDecisionRule::getSolutionApproachParameters(string delimiter) const
+string Kadaptability::getSolutionApproachParameters(string delimiter) const
 {
     string out("Kadapt");
     out += delimiter;
@@ -1228,7 +1229,7 @@ string KadaptabilityDecisionRule::getSolutionApproachParameters(string delimiter
     return out;
 }
 
-ROCPPVarIF_Ptr KadaptabilityDecisionRule::getDVonPartition(string partition, string OrigDVname) const
+ROCPPVarIF_Ptr Kadaptability::getDVonPartition(string partition, string OrigDVname) const
 {
     map< string, map<string, ROCPPVarIF_Ptr> >::const_iterator pit( m_mapPartitionEnc_mapOrigDVtoDVonPartition.find(partition) );
     
@@ -1244,7 +1245,7 @@ ROCPPVarIF_Ptr KadaptabilityDecisionRule::getDVonPartition(string partition, str
     
 }
 
-ROCPPUnc_Ptr KadaptabilityDecisionRule::getUncOnPartition(string OrigUncName, string partition, uint t) const
+ROCPPUnc_Ptr Kadaptability::getUncOnPartition(string OrigUncName, string partition, uint t) const
 {
     
     // in the submap find the pair (t and partition)
@@ -1265,7 +1266,7 @@ ROCPPUnc_Ptr KadaptabilityDecisionRule::getUncOnPartition(string OrigUncName, st
     return u_it2->second;
 }
 
-void KadaptabilityDecisionRule::getWsSolutions(ROCPPOptModelIF_Ptr pIn, const map<string, double> &warmStartResults, const map<uint,uint> &wsMap, map<string, double> &wsSolutions)
+void Kadaptability::getWsSolutions(ROCPPOptModelIF_Ptr pIn, const map<string, double> &warmStartResults, const map<uint,uint> &wsMap, map<string, double> &wsSolutions)
 {
     
     checkWsCompatability(wsMap);
@@ -1359,7 +1360,7 @@ void KadaptabilityDecisionRule::getWsSolutions(ROCPPOptModelIF_Ptr pIn, const ma
 //%%%%%%%%%%%%%%%%%%%%%%%% Print Functions %%%%%%%%%%%%%%%%%%%%%%
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-void KadaptabilityDecisionRule::printParametersToScreen() const
+void Kadaptability::printParametersToScreen() const
 {
     cout << endl;
     cout << "=========================================================================== " << endl;
@@ -1376,7 +1377,7 @@ void KadaptabilityDecisionRule::printParametersToScreen() const
     
 }
 
-void KadaptabilityDecisionRule::printOut(ROCPPOptModelIF_Ptr pIn, const map<string, double> &resultIn, ROCPPVarIF_Ptr dv, string partition)
+void Kadaptability::printOut(ROCPPOptModelIF_Ptr pIn, const map<string, double> &resultIn, ROCPPVarIF_Ptr dv, string partition)
 {
     map<string, map<string, ROCPPVarIF_Ptr> >::const_iterator dvMap(m_DVmap.find(dv->getName()));
     string dvName = dvMap->second.find(partition)->second->getName();
@@ -1388,7 +1389,7 @@ void KadaptabilityDecisionRule::printOut(ROCPPOptModelIF_Ptr pIn, const map<stri
         cout << "Value of variable " << dv->getName() << " in contingency plan " << partition << " is: " << value << endl;
 }
 
-void KadaptabilityDecisionRule::printOut(ROCPPOptModelIF_Ptr pIn, const map<string, double> &resultIn, ROCPPVarIF_Ptr dv)
+void Kadaptability::printOut(ROCPPOptModelIF_Ptr pIn, const map<string, double> &resultIn, ROCPPVarIF_Ptr dv)
 {
     
     map<string, map<string, ROCPPVarIF_Ptr> >::const_iterator vit ( m_DVmap.find(dv->getName()) );
@@ -1403,7 +1404,7 @@ void KadaptabilityDecisionRule::printOut(ROCPPOptModelIF_Ptr pIn, const map<stri
     
 }
 
-void KadaptabilityDecisionRule::printOut(ROCPPOptModelIF_Ptr pIn, const map<string, double> &resultIn, ROCPPUnc_Ptr unc, string partition)
+void Kadaptability::printOut(ROCPPOptModelIF_Ptr pIn, const map<string, double> &resultIn, ROCPPUnc_Ptr unc, string partition)
 {
     if(pIn->getType() != dduType)
         throw MyException("Non ddu type model does not have measurement variables");
@@ -1451,7 +1452,7 @@ void KadaptabilityDecisionRule::printOut(ROCPPOptModelIF_Ptr pIn, const map<stri
     
 }
 
-void KadaptabilityDecisionRule::printOut(ROCPPOptModelIF_Ptr pIn, const map<string, double> &resultIn, ROCPPUnc_Ptr unc)
+void Kadaptability::printOut(ROCPPOptModelIF_Ptr pIn, const map<string, double> &resultIn, ROCPPUnc_Ptr unc)
 {
     
     for (map< string, map<string, ROCPPVarIF_Ptr> >::const_iterator pit = m_mapPartitionEnc_mapOrigDVtoDVonPartition.begin(); pit != m_mapPartitionEnc_mapOrigDVtoDVonPartition.end(); pit++)
