@@ -712,9 +712,9 @@ ROCPPOptModelIF_Ptr PiecewiseDecisionRule::approximate(ROCPPOptModelIF_Ptr pIn)
             pOut->add_constraint( (*cit)->mapVars(mapFromOldToNewVar), pit->first);
         }
         
-//        // add to the problem the constraints specific to this partition (mapping the breakpoint variables)
-//        for (PartitionConstructorIF::usconstraints_iterator cit = m_pPartConstructor->USCbegin( (*pit).first ); cit != m_pPartConstructor->USCend((*pit).first ); cit++)
-//            pOut->add_constraint( (*cit)->mapVars(mapFromOldToNewVar), pit->first );
+        // add to the problem the constraints specific to this partition (mapping the breakpoint variables)
+        for (PartitionConstructorIF::usconstraints_iterator cit = m_pPartConstructor->USCbegin( (*pit).first ); cit != m_pPartConstructor->USCend((*pit).first ); cit++)
+            pOut->add_constraint( (*cit)->mapVars(mapFromOldToNewVar), pit->first );
         
         
         // map the variables to variables over this partition
