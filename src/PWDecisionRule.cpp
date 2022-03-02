@@ -1,10 +1,15 @@
-//
-//  PWDecisionRule.cpp
-//  RobustOptimizationPlatform
-//
-// This software is Copyright © 2020 Phebe Vayanos. All Rights Reserved.
-// Software created by Phebe Vayanos, Qing Jin, and George Elissaios
-//
+/*
+ * ROCPP/PWDecisionRule.cpp
+ *
+ * This software is Copyright © 2020 The University of Southern California. All Rights Reserved.
+ * Authors: Phebe Vayanos, Qing Jin, George Elissaios
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+ * If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * Paper: "ROC++: Robust Optimization in C++"
+ * Homepage: https://sites.google.com/usc.edu/robust-opt-cpp/home
+ */
 
 
 #include "IncludeFiles.hpp"
@@ -712,7 +717,7 @@ ROCPPOptModelIF_Ptr PiecewiseDecisionRule::approximate(ROCPPOptModelIF_Ptr pIn)
             pOut->add_constraint( (*cit)->mapVars(mapFromOldToNewVar), pit->first);
         }
         
-        // add to the problem the constraints specific to this partition (mapping the breakpoint variables)
+//        // add to the problem the constraints specific to this partition (mapping the breakpoint variables)
         for (PartitionConstructorIF::usconstraints_iterator cit = m_pPartConstructor->USCbegin( (*pit).first ); cit != m_pPartConstructor->USCend((*pit).first ); cit++)
             pOut->add_constraint( (*cit)->mapVars(mapFromOldToNewVar), pit->first );
         
