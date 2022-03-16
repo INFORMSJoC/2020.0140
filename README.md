@@ -1,5 +1,33 @@
+[![INFORMS Journal on Computing Logo](https://INFORMSJoC.github.io/logos/INFORMS_Journal_on_Computing_Header.jpg)](https://pubsonline.informs.org/journal/ijoc)
+
 # ROCPP
-## Introduction
+
+This archive is distributed in association with the [INFORMS Journal on Computing](https://pubsonline.informs.org/journal/ijoc) under the [MPL 2.0 License](LICENSE).
+
+The software and data in this repository are a snapshot of the software and data that were used in the research reported on in the paper [ROC++: Robust Optimization in C++]() by P. Vayanos, Q. Jin, and G. Elissaios.
+The snapshot is based on [this SHA](https://github.com/robust-opt-cpp/ROCPP/commit/74b2b64a770d93e81e8f258b810a33fbf562ecaa) in the development repository. 
+
+**Important: This code is being developed on an on-going basis at [https://github.com/robust-opt-cpp/ROCPP](https://github.com/robust-opt-cpp/ROCPP). Please go there if you would like to get a more recent version or would like support.**
+
+## Cite
+To cite this software, please cite the [paper]() using its DOI and the software itself, using the following DOI.
+
+[![DOI]()]()
+
+Below is the BibTex for citing this version of the code.
+
+```
+@article{ROCPP,
+  author =        {P. Vayanos, Q. Jin, G. Elissaios},
+  publisher =     {INFORMS Journal on Computing},
+  title =         {{ROCPP} Version v1.0},
+  year =          {2020},
+  doi =           {xx.xxxx/zenodo.xxxxxxx},
+  url =           {https://github.com/INFORMSJoC/2020.0140},
+} 
+```
+
+## Description
 ROC++ is a C++ based platform for modeling, automatically reformulating, and solving robust optimization problems. 
 
 ROC++ can address both single- and multi-stage problems involving exogenous and/or endogenous uncertain parameters and real- and/or binary-valued adaptive variables. 
@@ -258,8 +286,6 @@ pSolver.solve(refModel)
 ## Please cite us
 We hope that you find ROC++ useful in your work. **If you do use it, please cite us as**:
 
-P Vayanos, Q Jin, and G Elissaios. [ROC++: Robust Optimization in C++](http://www.optimization-online.org/DB_FILE/2020/06/7835.pdf). Under review at INFORMS Journal on Computing, 2020.
-
 **If you use the ROCPPKadapt approximator, please also cite the paper**:
 
 Vayanos P, Georghiou A, Yu H (2019) [Robust optimization with decision-dependent information discovery](http://www.optimization-online.org/DB_HTML/2019/09/7375.html). Under review at Management Science, 2021.
@@ -267,3 +293,11 @@ Vayanos P, Georghiou A, Yu H (2019) [Robust optimization with decision-dependent
 **If you use the ROCPPPiecewise approximator, please also cite the paper**:
 
 Vayanos  P,  Kuhn  D,  Rustem  B  (2011)  [Decision  rules  for  information  discovery  in  multi-stage  stochastic programming](https://ieeexplore.ieee.org/document/6161382). Proceedings of the 50th IEEE Conference on Decision and Control , 7368–7373. 
+
+## Ongoing Development
+
+This code is being developed on an on-going basis at the author's [Github site](https://github.com/robust-opt-cpp/ROCPP).
+
+## Support
+
+For support in using this software, submit an [issue](https://github.com/robust-opt-cpp/ROCPP/issues/new) or [email](mailto:rocpp@usc.edu) us.
