@@ -4,7 +4,7 @@
 
 This archive is distributed in association with the [INFORMS Journal on Computing](https://pubsonline.informs.org/journal/ijoc) under the [MPL 2.0 License](LICENSE).
 
-The software and data in this repository are a snapshot of the software and data that were used in the research reported on in the paper [ROC++: Robust Optimization in C++]() by P. Vayanos, Q. Jin, and G. Elissaios.
+The software and data in this repository are a snapshot of the software and data that were used in the research reported on in the paper [ROC++: Robust Optimization in C++](https://pubsonline.informs.org/doi/10.1287/ijoc.2022.1209) by P. Vayanos, Q. Jin, and G. Elissaios.
 The snapshot is based on [this SHA](https://github.com/robust-opt-cpp/ROCPP/commit/74b2b64a770d93e81e8f258b810a33fbf562ecaa) in the development repository. 
 
 **Important: This code is being developed on an on-going basis at [https://github.com/robust-opt-cpp/ROCPP](https://github.com/robust-opt-cpp/ROCPP). Please go there if you would like to get a more recent version or would like support.**
