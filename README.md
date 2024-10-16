@@ -10,9 +10,7 @@ The snapshot is based on [this SHA](https://github.com/robust-opt-cpp/ROCPP/comm
 **Important: This code is being developed on an on-going basis at [https://github.com/robust-opt-cpp/ROCPP](https://github.com/robust-opt-cpp/ROCPP). Please go there if you would like to get a more recent version or would like support.**
 
 ## Cite
-To cite this software, please cite the paper using its DOI and the software itself, using the following DOI.
-
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6360996.svg)](https://doi.org/10.5281/zenodo.6360996)
+To cite this software, please cite the paper using its DOI and the software itself, using the following DOI: [10.1287/ijoc.2022.1209.cd](https://doi.org/10.1287/ijoc.2022.1209.cd)  
 
 Below is the BibTex for citing this version of the code.
 
@@ -22,7 +20,7 @@ Below is the BibTex for citing this version of the code.
   publisher =     {INFORMS Journal on Computing},
   title =         {{ROCPP} Version v2020.0140},
   year =          {2022},
-  doi =           {10.5281/zenodo.6360996},
+  doi =           {10.1287/ijoc.2022.1209.cd},
   url =           {https://github.com/INFORMSJoC/2020.0140},
 } 
 ```
